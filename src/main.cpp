@@ -3,36 +3,31 @@
 #include <iostream>
 
 #include "../include/RenderWindow.hpp"
+#include "../include/Entity.hpp"
+#include "../include/Input.hpp"
 
 int main(int argc, char *argv[])
 {
-    if (SDL_Init(SDL_INIT_VIDEO) > 0)
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         std::cout << "SDL_Init has FAILED. SDL_Error:" << SDL_GetError() << std::endl;
     }
 
-    if (!(IMG_Init(IMG_INIT_PNG)))
+    if (!(IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)))
     {
         std::cout << "IMG_Init has FAILED. IMG_Error:" << SDL_GetError() << std::endl;
     }
 
-    RenderWindow window("Game", 1280, 720);
+    RenderWindow window("Majesticus");
+    Entity player(100, 100, window.loadTexture("res/gfx/skepp.png"));
 
-    SDL_Texture *grassTexture = window.loadTexture("res/gfx/ground_grass_1.png");
-
-    bool gameRunning = true;
-    SDL_Event event;
-
-    while (gameRunning)
+    while (1)
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-                gameRunning = false;
-        }
         window.clear();
-        window.render(grassTexture);
+        doInput();
+        window.render(player.getTexture(), player.getX(), player.getY());
         window.display();
+        SDL_Delay(1000 / 60);
     }
 
     window.cleanUp();
